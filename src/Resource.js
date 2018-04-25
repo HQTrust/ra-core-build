@@ -74,6 +74,19 @@ export class Resource extends Component {
 
         return (
             <Switch>
+                {list && (
+                    <Route
+                        exact
+                        path={`${match.url}`}
+                        render={routeProps => (
+                            <WithPermissions
+                                render={props => createElement(list, props)}
+                                {...routeProps}
+                                {...resource}
+                            />
+                        )}
+                    />
+                )}
                 {create && (
                     <Route
                         exact
@@ -81,19 +94,6 @@ export class Resource extends Component {
                         render={routeProps => (
                             <WithPermissions
                                 render={props => createElement(create, props)}
-                                {...routeProps}
-                                {...resource}
-                            />
-                        )}
-                    />
-                )}
-                {show && (
-                    <Route
-                        exact
-                        path={`${match.url}/:id/show`}
-                        render={routeProps => (
-                            <WithPermissions
-                                render={props => createElement(show, props)}
                                 {...routeProps}
                                 {...resource}
                             />
@@ -113,13 +113,12 @@ export class Resource extends Component {
                         )}
                     />
                 )}
-                {list && (
+                {show && (
                     <Route
-                        exact
-                        path={`${match.url}`}
+                        path={`${match.url}/:id/show`}
                         render={routeProps => (
                             <WithPermissions
-                                render={props => createElement(list, props)}
+                                render={props => createElement(show, props)}
                                 {...routeProps}
                                 {...resource}
                             />
