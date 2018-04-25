@@ -122,6 +122,9 @@ export class ListController extends Component {
         if (nextProps.version !== this.props.version) {
             this.updateData(nextProps);
         }
+        if (nextProps.filterValues !== this.props.filterValues) {
+            requestAnimationFrame(this.showInactiveFilters);
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -211,8 +214,23 @@ export class ListController extends Component {
         this.setState({ activeFilters: {} });
     };
 
+    sanitizedFilterName = filterName => {
+        const suffix = filterName.slice(-3);
+        return suffix === 'Min' || suffix === 'Max'
+            ? filterName.substr(0, filterName.length - 3)
+            : filterName;
+    };
+
     showInactiveFilters = () => {
-        this.setState({ activeFilters: this.state.enabledSources });
+        const activeFilters = { ...this.state.enabledSources };
+        const enabledSources = { ...this.state.enabledSources };
+        Object.keys(this.props.filterValues).forEach(filterName => {
+            const sanitizedFilterName = this.sanitizedFilterName(filterName);
+            activeFilters[sanitizedFilterName] = true;
+            enabledSources[sanitizedFilterName] = true;
+        });
+
+        this.setState({ activeFilters, enabledSources });
     };
 
     hideFilter = filterName => {

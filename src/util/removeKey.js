@@ -1,6 +1,6 @@
 const removeKey = (target, path) =>
     Object.keys(target).reduce((acc, key) => {
-        if (key !== path) {
+        if (!key.startsWith(path)) {
             return Object.assign({}, acc, { [key]: target[key] });
         }
 
