@@ -123,7 +123,12 @@ export class ListController extends Component {
             this.updateData(nextProps);
         }
         if (nextProps.filterValues !== this.props.filterValues) {
-            requestAnimationFrame(this.showInactiveFilters);
+            // TODO: showing inactive filters when props.filterValues changed
+            // is one approach for viewing the filter panel after page reload
+            // when there are filters present in the url. This does however
+            // break the tabBar by expanding the collapsed filter panel when
+            // user clicks a tab. Fixme!
+            // requestAnimationFrame(this.showInactiveFilters);
         }
     }
 
