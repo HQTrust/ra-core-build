@@ -149,7 +149,7 @@ export class CoreAdminRouter extends Component {
                         ))}
                     <Route
                         path="/"
-                        render={() =>
+                        render={(routeProps) =>
                             createElement(appLayout, {
                                 children: (
                                     <RoutesWithLayout
@@ -165,6 +165,7 @@ export class CoreAdminRouter extends Component {
                                 dashboard,
                                 logout,
                                 menu,
+                                routeProps,
                                 theme,
                                 title,
                             })}
