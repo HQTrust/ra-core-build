@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import compose from 'recompose/compose';
 import { createSelector } from 'reselect';
+import get from 'lodash/get';
 
 import { crudGetOne, crudGetMatching } from '../../actions/dataActions';
 import {
@@ -172,13 +173,16 @@ export class ReferenceInputController extends Component {
 
     render() {
         const {
+            children,
             input,
-            referenceRecord,
             matchingReferences,
             onChange,
-            children,
+            record,
+            referenceRecord,
+            source,
             translate,
         } = this.props;
+        const defaultValue = get(record, source);
 
         const dataStatus = getDataStatus({
             input,
@@ -189,6 +193,7 @@ export class ReferenceInputController extends Component {
 
         return children({
             choices: dataStatus.choices,
+            defaultValue,
             error: dataStatus.error,
             isLoading: dataStatus.waiting,
             onChange,

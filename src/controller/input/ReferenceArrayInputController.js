@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import debounce from 'lodash/debounce';
 import compose from 'recompose/compose';
 import { createSelector } from 'reselect';
+import get from 'lodash/get';
 
 import {
     crudGetMany as crudGetManyAction,
@@ -177,13 +178,19 @@ export class ReferenceArrayInputController extends Component {
 
     render() {
         const {
+            children,
             input,
-            referenceRecords,
             matchingReferences,
             onChange,
-            children,
+            record,
+            referenceRecords,
+            source,
             translate,
         } = this.props;
+        const givenRecords = get(record, source);
+        const defaultValue = givenRecords
+            ? givenRecords.map(r => r.id)
+            : undefined;
 
         const dataStatus = getDataStatus({
             input,
@@ -194,6 +201,7 @@ export class ReferenceArrayInputController extends Component {
 
         return children({
             choices: dataStatus.choices,
+            defaultValue,
             error: dataStatus.error,
             isLoading: dataStatus.waiting,
             onChange,
