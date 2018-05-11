@@ -47,6 +47,12 @@ export const crudGetOne = (resource, id, basePath) => ({
             notification: {
                 body: 'ra.notification.item_doesnt_exist',
                 level: 'warning',
+                messageArgs: {
+                    smart_count: 1,
+                    translatables: {
+                        resource: `ra.resources.${resource}`,
+                    },
+                },
             },
             redirectTo: 'list',
             refresh: true,
@@ -71,6 +77,9 @@ export const crudCreate = (resource, data, basePath, redirectTo = 'edit') => ({
                 level: 'info',
                 messageArgs: {
                     smart_count: 1,
+                    translatables: {
+                        resource: `ra.resources.${resource}`,
+                    },
                 },
             },
             redirectTo,
@@ -111,6 +120,9 @@ export const crudUpdate = (
                 level: 'info',
                 messageArgs: {
                     smart_count: 1,
+                    translatables: {
+                        resource: `ra.resources.${resource}`,
+                    },
                 },
             },
             redirectTo,
@@ -151,6 +163,9 @@ export const crudUpdateMany = (
                 level: 'info',
                 messageArgs: {
                     smart_count: ids.length,
+                    translatables: {
+                        resource: `ra.resources.${resource}`,
+                    },
                 },
             },
             basePath,
@@ -191,6 +206,9 @@ export const crudDelete = (
                 level: 'info',
                 messageArgs: {
                     smart_count: 1,
+                    translatables: {
+                        resource: `ra.resources.${resource}`,
+                    },
                 },
             },
             redirectTo,
