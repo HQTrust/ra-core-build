@@ -12,6 +12,7 @@ import {
     FETCH_ERROR,
     FETCH_START,
 } from '../actions/fetchActions';
+import { CUSTOM } from '../dataFetchActions'
 
 export function* handleFetch(dataProvider, action) {
     const {
@@ -33,12 +34,21 @@ export function* handleFetch(dataProvider, action) {
             put({ type: `${type}_LOADING`, payload, meta }),
             put({ type: FETCH_START }),
         ]);
-        let response = yield call(
-            dataProvider,
-            restType,
-            meta.resource,
-            payload
-        );
+        let response = yield (restType === CUSTOM
+                              ? call(
+                                  dataProvider,
+                                  restType,
+                                  meta.resource,
+                                  payload,
+                                  meta.method,
+                                  meta.requestPath
+                              )
+                              : call(
+                                  dataProvider,
+                                  restType,
+                                  meta.resource,
+                                  payload
+                              ));
         if (!response.data) {
             throw new Error('REST response must contain a data key');
         }

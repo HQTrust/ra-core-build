@@ -2,6 +2,7 @@ import {
     GET_LIST,
     GET_ONE,
     CREATE,
+    CUSTOM,
     UPDATE,
     UPDATE_MANY,
     DELETE,
@@ -339,6 +340,30 @@ export const crudGetManyReference = (
                 level: 'warning',
             },
             refresh: true,
+        },
+    },
+});
+
+export const CRUD_CUSTOM = 'RA/CRUD_CUSTOM';
+export const CRUD_CUSTOM_LOADING = 'RA/CRUD_CUSTOM_LOADING';
+export const CRUD_CUSTOM_FAILURE = 'RA/CRUD_CUSTOM_FAILURE';
+export const CRUD_CUSTOM_SUCCESS = 'RA/CRUD_CUSTOM_SUCCESS';
+
+export const crudCustom = (resource, requestPath, method, params, meta) => ({
+    type: CRUD_CUSTOM,
+    payload: params,
+    meta: {
+        method,
+        requestPath,
+        resource,
+        fetch: CUSTOM,
+        onSuccess: {
+            notification: meta.successNotification,
+            redirectTo: meta.redirectTo,
+            basePath: meta.basePath,
+        },
+        onFailure: {
+            notification: meta.failureNotification,
         },
     },
 });
