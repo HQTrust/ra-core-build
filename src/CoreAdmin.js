@@ -18,6 +18,7 @@ import CoreAdminRouter from './CoreAdminRouter';
 
 const CoreAdmin = ({
     appLayout,
+    unauthenticatedLayout,
     authProvider,
     children,
     customReducers = {},
@@ -75,9 +76,11 @@ const CoreAdmin = ({
                             exact
                             path="/login"
                             render={props =>
-                                createElement(loginPage, {
-                                    ...props,
-                                    title,
+                                createElement(unauthenticatedLayout, {
+                                    children: createElement(loginPage, {
+                                        ...props,
+                                        title,
+                                    })
                                 })}
                         />
                         <Route
@@ -85,6 +88,7 @@ const CoreAdmin = ({
                             render={props => (
                                 <CoreAdminRouter
                                     appLayout={appLayout}
+                                    unauthenticatedLayout={unauthenticatedLayout}
                                     catchAll={catchAll}
                                     customRoutes={customRoutes}
                                     dashboard={dashboard}
@@ -114,6 +118,7 @@ const componentPropType = PropTypes.oneOfType([
 
 CoreAdmin.propTypes = {
     appLayout: componentPropType,
+    unauthenticatedLayout: componentPropType,
     authProvider: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
     catchAll: componentPropType,

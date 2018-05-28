@@ -89,6 +89,7 @@ export class CoreAdminRouter extends Component {
     render() {
         const {
             appLayout,
+            unauthenticatedLayout,
             catchAll,
             children,
             customRoutes,
@@ -141,10 +142,12 @@ export class CoreAdminRouter extends Component {
                                 exact={route.props.exact}
                                 path={route.props.path}
                                 render={props =>
-                                    this.renderCustomRoutesWithoutLayout(
-                                        route,
-                                        props
-                                    )}
+                                    createElement(unauthenticatedLayout, {
+                                        children: this.renderCustomRoutesWithoutLayout(
+                                            route,
+                                            props
+                                        )
+                                    })}
                             />
                         ))}
                     <Route
@@ -183,6 +186,7 @@ const componentPropType = PropTypes.oneOfType([
 
 CoreAdminRouter.propTypes = {
     appLayout: componentPropType,
+    unauthenticatedLayout: componentPropType,
     authProvider: PropTypes.func,
     catchAll: componentPropType,
     children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
