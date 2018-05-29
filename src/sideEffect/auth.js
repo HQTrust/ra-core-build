@@ -45,13 +45,7 @@ export default authProvider => {
                         error: e,
                         meta: { auth: true },
                     });
-                    const errorMessage =
-                        typeof e === 'string'
-                            ? e
-                            : typeof e === 'undefined' || !e.message
-                              ? 'ra.auth.sign_in_error'
-                              : e.message;
-                    yield put(showNotification(errorMessage, 'warning'));
+                    yield put(showNotification('ra.auth.sign_in_error', 'warning'));
                 }
                 break;
             }
