@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import isEqual from 'lodash/isEqual'
 
 import { crudGetManyReference as crudGetManyReferenceAction } from '../../actions';
 import {
@@ -70,7 +71,10 @@ export class ReferenceManyFieldController extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.record.id !== nextProps.record.id) {
+        if (
+            this.props.record.id !== nextProps.record.id ||
+            !isEqual(this.props.filter, nextProps.filter)
+        ) {
             this.fetchReferences(nextProps);
         }
     }
