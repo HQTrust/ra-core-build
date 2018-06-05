@@ -6,6 +6,7 @@ import {
     GET_MANY_REFERENCE,
     CREATE,
     UPDATE,
+    DELETE,
 } from '../../../dataFetchActions';
 import {
     CRUD_UPDATE_OPTIMISTIC,
@@ -60,7 +61,7 @@ Object.defineProperty(initialState, 'fetchedAt', { value: {} }); // non enumerab
 
 export default resource => (
     previousState = initialState,
-    { type, payload, meta }
+    { type, payload, requestPayload, meta }
 ) => {
     if (!meta || meta.resource !== resource) {
         return previousState;
@@ -87,6 +88,21 @@ export default resource => (
         case UPDATE:
         case CREATE:
             return addRecords([payload.data], previousState);
+        case DELETE: {
+            const { previousData: { id } } = requestPayload;
+
+            const newState = { ...previousState };
+            delete newState[id];
+
+            Object.defineProperty(newState, 'fetchedAt', {
+                value: getFetchedAt(
+                    Object.keys(newState),
+                    previousState.fetchedAt
+                ),
+            });
+
+            return newState;
+        }
         default:
             return previousState;
     }

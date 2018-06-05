@@ -8,6 +8,7 @@ import {
     CRUD_GET_ONE_SUCCESS,
     CRUD_CREATE_SUCCESS,
     CRUD_UPDATE_SUCCESS,
+    CRUD_DELETE_SUCCESS,
 } from '../../../../actions/dataActions';
 
 import getFetchedAt from '../../../../util/getFetchedAt';
@@ -29,7 +30,10 @@ export const addRecordIdsFactory = getFetchedAt => (
 
 const addRecordIds = addRecordIdsFactory(getFetchedAt);
 
-export default resource => (previousState = [], { type, payload, meta }) => {
+export default resource => (
+    previousState = [],
+    { type, payload, requestPayload, meta }
+) => {
     if (!meta || meta.resource !== resource) {
         return previousState;
     }
@@ -48,6 +52,16 @@ export default resource => (previousState = [], { type, payload, meta }) => {
         case CRUD_CREATE_SUCCESS:
         case CRUD_UPDATE_SUCCESS:
             return addRecordIds([payload.data.id], previousState);
+        case CRUD_DELETE_SUCCESS: {
+            const { previousData: { id } } = requestPayload;
+
+            const newState = previousState.filter(idValue => idValue !== id);
+            Object.defineProperty(newState, 'fetchedAt', {
+                value: getFetchedAt(newState, previousState.fetchedAt),
+            });
+
+            return newState;
+        }
         case CRUD_DELETE_OPTIMISTIC: {
             const index = previousState
                 .map(el => el == payload.id) // eslint-disable-line eqeqeq

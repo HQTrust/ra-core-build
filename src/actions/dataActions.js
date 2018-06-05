@@ -11,6 +11,10 @@ import {
     GET_MANY_REFERENCE,
 } from '../dataFetchActions';
 
+const getResourceKey = resource => {
+    return Array.isArray(resource) ? resource[1].name : resource;
+}
+
 export const CRUD_GET_LIST = 'RA/CRUD_GET_LIST';
 export const CRUD_GET_LIST_LOADING = 'RA/CRUD_GET_LIST_LOADING';
 export const CRUD_GET_LIST_FAILURE = 'RA/CRUD_GET_LIST_FAILURE';
@@ -51,7 +55,7 @@ export const crudGetOne = (resource, id, basePath) => ({
                 messageArgs: {
                     smart_count: 1,
                     translatables: {
-                        resource: `ra.resources.${resource}`,
+                        resource: `ra.resources.${getResourceKey(resource)}`,
                     },
                 },
             },
@@ -79,7 +83,7 @@ export const crudCreate = (resource, data, basePath, redirectTo = 'edit') => ({
                 messageArgs: {
                     smart_count: 1,
                     translatables: {
-                        resource: `ra.resources.${resource}`,
+                        resource: `ra.resources.${getResourceKey(resource)}`,
                     },
                 },
             },
@@ -122,7 +126,7 @@ export const crudUpdate = (
                 messageArgs: {
                     smart_count: 1,
                     translatables: {
-                        resource: `ra.resources.${resource}`,
+                        resource: `ra.resources.${getResourceKey(resource)}`,
                     },
                 },
             },
@@ -165,7 +169,7 @@ export const crudUpdateMany = (
                 messageArgs: {
                     smart_count: ids.length,
                     translatables: {
-                        resource: `ra.resources.${resource}`,
+                        resource: `ra.resources.${getResourceKey(resource)}`,
                     },
                 },
             },
@@ -208,7 +212,7 @@ export const crudDelete = (
                 messageArgs: {
                     smart_count: 1,
                     translatables: {
-                        resource: `ra.resources.${resource}`,
+                        resource: `ra.resources.${getResourceKey(resource)}`,
                     },
                 },
             },
