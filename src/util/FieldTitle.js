@@ -13,16 +13,19 @@ export const FieldTitle = ({
     isRequired,
     translate,
 }) => (
-    <span>
-        {typeof label !== 'undefined'
-            ? translate(label, { _: label })
-            : typeof source !== 'undefined'
-              ? translate(`resources.${resource}.fields.${source}`, {
-                    _: inflection.transform(source, ['underscore', 'humanize']),
-                })
-              : ''}
-        {isRequired && ' *'}
-    </span>
+    // If the user specifically passes a falsy value, don't render
+    label || label === undefined ? (
+        <span>
+            {typeof label !== 'undefined'
+                ? translate(label, { _: label })
+                : typeof source !== 'undefined'
+                  ? translate(`resources.${resource}.fields.${source}`, {
+                        _: inflection.transform(source, ['underscore', 'humanize']),
+                    })
+                  : ''}
+            {isRequired && ' *'}
+        </span>
+    ) : null
 );
 
 FieldTitle.propTypes = {
