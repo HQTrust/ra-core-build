@@ -76,7 +76,8 @@ export default authProvider => {
             }
             case FETCH_ERROR:
                 try {
-                    yield call(authProvider, AUTH_ERROR, error);
+                    const redirectTo = yield call(authProvider, AUTH_ERROR, error);
+                    if(redirectTo) { yield put(push(redirectTo)) }
                 } catch (e) {
                     yield call(authProvider, AUTH_LOGOUT);
                     yield put(userLogout());
