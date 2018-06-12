@@ -12,6 +12,7 @@ import {
     USER_LOGIN_FAILURE,
     USER_CHECK,
     USER_LOGOUT,
+    userLogout,
 } from '../actions/authActions';
 import { FETCH_ERROR } from '../actions/fetchActions';
 import { AUTH_LOGIN, AUTH_CHECK, AUTH_ERROR, AUTH_LOGOUT } from '../auth';
@@ -78,7 +79,7 @@ export default authProvider => {
                     yield call(authProvider, AUTH_ERROR, error);
                 } catch (e) {
                     yield call(authProvider, AUTH_LOGOUT);
-                    yield put(push('/login'));
+                    yield put(userLogout());
                     yield put(hideNotification());
                 }
                 break;

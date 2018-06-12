@@ -1,6 +1,7 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { push } from 'react-router-redux';
 import { reset } from 'redux-form';
+import get from 'lodash/get'
 
 import resolveRedirectTo from '../util/resolveRedirectTo';
 
@@ -17,7 +18,7 @@ export function* handleRedirection({
                   resolveRedirectTo(
                       redirectTo,
                       basePath,
-                      payload.id || payload.data.id
+                      get(payload, 'id') || get(payload, 'data.id')
                   )
               )
           )

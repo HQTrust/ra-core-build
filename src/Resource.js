@@ -57,6 +57,8 @@ export class Resource extends Component {
             edit,
             show,
             options,
+            WrapperComponent,
+            wrapperProps,
         } = this.props;
 
         if (context === 'registration') {
@@ -72,7 +74,7 @@ export class Resource extends Component {
             hasCreate: !!create,
         };
 
-        return (
+        const router = (
             <Switch>
                 {list && (
                     <Route
@@ -127,6 +129,12 @@ export class Resource extends Component {
                 )}
             </Switch>
         );
+
+        return WrapperComponent ? (
+            <WrapperComponent {...wrapperProps}>
+                {router}
+            </WrapperComponent>
+        ) : router
     }
 }
 
@@ -147,6 +155,8 @@ Resource.propTypes = {
     options: PropTypes.object,
     registerResource: PropTypes.func.isRequired,
     unregisterResource: PropTypes.func.isRequired,
+    WrapperComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+    wrapperProps: PropTypes.object,
 };
 
 Resource.defaultProps = {

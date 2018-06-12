@@ -1,3 +1,9 @@
+export const INIT = 'RA/INIT'
+
+export const init = () => ({
+  type: INIT,
+});
+
 export * from './accumulateActions';
 export * from './authActions';
 export * from './dataActions';

@@ -7,6 +7,7 @@ import getContext from 'recompose/getContext';
 
 import { AUTH_GET_PERMISSIONS } from './auth/types';
 import { isLoggedIn } from './reducer';
+import { init } from './actions';
 import { userLogout } from './actions/authActions';
 import RoutesWithLayout from './RoutesWithLayout';
 
@@ -20,6 +21,7 @@ export class CoreAdminRouter extends Component {
     state = { children: [] };
 
     componentWillMount() {
+        this.props.init();
         this.initializeResources(this.props);
     }
 
@@ -209,5 +211,5 @@ export default compose(
     getContext({
         authProvider: PropTypes.func,
     }),
-    connect(mapStateToProps, { userLogout })
+    connect(mapStateToProps, { init, userLogout })
 )(CoreAdminRouter);
