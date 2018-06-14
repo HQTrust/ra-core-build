@@ -193,7 +193,7 @@ export class ListController extends Component {
 
     setPage = page => this.changeParams({ type: SET_PAGE, payload: page });
 
-    setFilters = debounce(filters => {
+    setFiltersImmediate = filters => {
         if (isEqual(filters, this.props.filterValues)) {
             return;
         }
@@ -201,7 +201,9 @@ export class ListController extends Component {
         // fix for redux-form bug with onChange and enableReinitialize
         const filtersWithoutEmpty = removeEmpty(filters);
         this.changeParams({ type: SET_FILTER, payload: filtersWithoutEmpty });
-    }, this.props.debounce);
+    }
+
+    setFilters = debounce(this.setFiltersImmediate, this.props.debounce);
 
     showFilter = (filterName, defaultValue) => {
         this.setState({
@@ -336,6 +338,7 @@ export class ListController extends Component {
             refresh: this.refresh,
             selectedIds,
             setFilters: this.setFilters,
+            setFiltersImmediate: this.setFiltersImmediate,
             setPage: this.setPage,
             setSourceActive: this.setSourceActive,
             setSort: this.setSort,
