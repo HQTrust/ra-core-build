@@ -7,6 +7,7 @@ import {
     CRUD_DELETE_OPTIMISTIC,
     CRUD_DELETE_MANY_OPTIMISTIC,
 } from '../../../../actions/dataActions';
+import isNumber from 'lodash/isNumber'
 
 export default resource => (previousState = 0, { type, payload, meta }) => {
     if (!meta || meta.resource !== resource) {
@@ -17,9 +18,9 @@ export default resource => (previousState = 0, { type, payload, meta }) => {
         case CRUD_GET_ONE_SUCCESS:
             return previousState == 0 ? 1 : previousState;
         case CRUD_GET_LIST_SUCCESS:
-            return payload.totalAll || previousState;
+            return isNumber(payload.totalAll) ? payload.totalAll : previousState;
         case CRUD_GET_MANY_REFERENCE_SUCCESS:
-            return payload.totalAll || previousState;
+            return isNumber(payload.totalAll) ? payload.totalAll : previousState;
         case CRUD_CREATE_SUCCESS:
             return previousState + 1;
         case CRUD_DELETE_SUCCESS:
