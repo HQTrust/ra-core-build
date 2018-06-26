@@ -1,7 +1,13 @@
+import get from 'lodash/get'
+
 import { REGISTER_RESOURCE, UNREGISTER_RESOURCE } from '../../../actions';
 
 import data from './data';
 import list from './list';
+
+export const metaMatchesResource = (meta, resource) => {
+  return get(meta, 'resource[1].name', get(meta, 'resource')) === resource
+}
 
 const initialState = {};
 export default (
@@ -42,7 +48,7 @@ export default (
         (acc, resource) => ({
             ...acc,
             [resource]:
-                action.meta.resource === resource
+                metaMatchesResource(action.meta, resource)
                     ? {
                           props: previousState[resource].props,
                           data: dataReducer(resource)(

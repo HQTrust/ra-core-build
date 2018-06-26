@@ -1,3 +1,6 @@
+import get from 'lodash/get'
+import mergeWith from 'lodash/mergeWith'
+
 import { FETCH_END } from '../../../actions/fetchActions';
 import {
     GET_LIST,
@@ -14,6 +17,7 @@ import {
 } from '../../../actions/dataActions';
 
 import getFetchedAt from '../../../util/getFetchedAt';
+import { metaMatchesResource } from './index'
 
 /**
  * Add new records to the pool, and remove outdated ones.
@@ -63,7 +67,7 @@ export default resource => (
     previousState = initialState,
     { type, payload, requestPayload, meta }
 ) => {
-    if (!meta || meta.resource !== resource) {
+    if (!metaMatchesResource(meta, resource)) {
         return previousState;
     }
     if (type === CRUD_UPDATE_OPTIMISTIC) {
@@ -86,8 +90,15 @@ export default resource => (
             return addRecords(payload.data, previousState);
         case GET_ONE:
         case UPDATE:
-        case CREATE:
-            return addRecords([payload.data], previousState);
+        case CREATE: {
+            const mergedData = mergeWith(
+                {},
+                get(requestPayload, 'data'),
+                get(payload, 'data'),
+                (a, b) => b === null ? a : undefined,
+            )
+            return addRecords([mergedData], previousState);
+        }
         case DELETE: {
             const { previousData: { id } } = requestPayload;
 
