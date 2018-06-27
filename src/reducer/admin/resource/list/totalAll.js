@@ -7,10 +7,11 @@ import {
     CRUD_DELETE_OPTIMISTIC,
     CRUD_DELETE_MANY_OPTIMISTIC,
 } from '../../../../actions/dataActions';
+import { metaMatchesResource } from '../index'
 import isNumber from 'lodash/isNumber'
 
 export default resource => (previousState = 0, { type, payload, meta }) => {
-    if (!meta || meta.resource !== resource) {
+    if (!metaMatchesResource(meta, resource)) {
         return previousState;
     }
 

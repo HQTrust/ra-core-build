@@ -10,6 +10,7 @@ import {
     CRUD_UPDATE_SUCCESS,
     CRUD_DELETE_SUCCESS,
 } from '../../../../actions/dataActions';
+import { metaMatchesResource } from '../index'
 
 import getFetchedAt from '../../../../util/getFetchedAt';
 
@@ -34,7 +35,7 @@ export default resource => (
     previousState = [],
     { type, payload, requestPayload, meta }
 ) => {
-    if (!meta || meta.resource !== resource) {
+    if (!metaMatchesResource(meta, resource)) {
         return previousState;
     }
     switch (type) {

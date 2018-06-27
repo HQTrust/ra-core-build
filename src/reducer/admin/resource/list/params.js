@@ -1,4 +1,5 @@
 import { CRUD_CHANGE_LIST_PARAMS } from '../../../../actions/listActions';
+import { metaMatchesResource } from '../index'
 
 const defaultState = {
     sort: null,
@@ -12,7 +13,7 @@ export default resource => (
     previousState = defaultState,
     { type, payload, meta }
 ) => {
-    if (!meta || meta.resource !== resource) {
+    if (!metaMatchesResource(meta, resource)) {
         return previousState;
     }
     switch (type) {
