@@ -29,7 +29,7 @@
         "lodash": "~4.17.5",
         "node-polyglot": "2.2.2",
         "prop-types": "~15.6.1",
-        "query-string": "~6.0.0",
+        "query-string": "~5",
         "ra-language-english": "^2.0.0-beta4",
         "react-redux": "~5.0.7",
         "react-router": "~4.2.0",

@@ -83,19 +83,31 @@ export class ListController extends Component {
     }
 
     componentDidMount() {
+        const { ids, params, query, total } = this.props
+
         if (
-            !this.props.query.page &&
-            !(this.props.ids || []).length &&
-            this.props.params.page > 1 &&
-            this.props.total > 0
+            !query.page &&
+            !(ids || []).length &&
+            params.page > 1 &&
+            total > 0
         ) {
-            this.setPage(this.props.params.page - 1);
+            this.setPage(params.page - 1);
             return;
         }
 
+        if (
+            params.page !== 1 ||
+            params.perPage !== null ||
+            params.sort !== null ||
+            params.order !== null ||
+            !isEqual(params.filter, {})
+        ) {
+            this.updateLocation(params);
+        }
+
         this.updateData(this.props);
-        if (Object.keys(this.props.query).length > 0) {
-            this.props.changeListParams(this.props.resource, this.props.query);
+        if (Object.keys(query).length > 0) {
+            this.props.changeListParams(this.props.resource, query);
         }
     }
 
@@ -271,15 +283,19 @@ export class ListController extends Component {
         }
     };
 
-    changeParams(action) {
-        const newParams = queryReducer(this.getQuery(), action);
+    updateLocation(params) {
         this.props.push({
             ...this.props.location,
             search: `?${stringify({
-                ...newParams,
-                filter: JSON.stringify(newParams.filter),
+                ...params,
+                filter: JSON.stringify(params.filter),
             })}`,
         });
+    }
+
+    changeParams(action) {
+        const newParams = queryReducer(this.getQuery(), action);
+        this.updateLocation(newParams);
         this.props.changeListParams(this.props.resource, newParams);
     }
 
