@@ -372,7 +372,10 @@ ListController.propTypes = {
     children: PropTypes.func.isRequired,
     filter: PropTypes.object,
     filters: PropTypes.element,
-    pagination: PropTypes.element,
+    pagination: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.element,
+    ]),
     perPage: PropTypes.number.isRequired,
     sort: PropTypes.shape({
         field: PropTypes.string,
