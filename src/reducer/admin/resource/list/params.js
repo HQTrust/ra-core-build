@@ -18,7 +18,15 @@ export default resource => (
     }
     switch (type) {
         case CRUD_CHANGE_LIST_PARAMS:
-            return payload;
+            const pathname = meta.location.pathname || 'default';
+            const filter = {
+                ...previousState.filter,
+                [meta.location.pathname]: payload.filter,
+            };
+            return {
+                ...payload,
+                filter,
+            };
         default:
             return previousState;
     }

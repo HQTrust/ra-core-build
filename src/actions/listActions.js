@@ -2,10 +2,10 @@ export const CRUD_CHANGE_LIST_PARAMS = 'RA/CRUD_CHANGE_LIST_PARAMS';
 export const SET_LIST_SELECTED_IDS = 'RA/SET_LIST_SELECTED_IDS';
 export const TOGGLE_LIST_ITEM = 'RA/TOGGLE_LIST_ITEM';
 
-export const changeListParams = (resource, params) => ({
+export const changeListParams = (resource, location, params) => ({
     type: CRUD_CHANGE_LIST_PARAMS,
     payload: params,
-    meta: { resource },
+    meta: { resource, location },
 });
 
 export const setListSelectedIds = (resource, ids) => ({

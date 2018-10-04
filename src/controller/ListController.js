@@ -83,7 +83,14 @@ export class ListController extends Component {
     }
 
     componentDidMount() {
-        const { ids, params, query, total } = this.props
+        const {
+            ids,
+            params,
+            query,
+            total,
+            resource,
+            location,
+        } = this.props
 
         if (
             !query.page &&
@@ -107,7 +114,7 @@ export class ListController extends Component {
 
         this.updateData(this.props);
         if (Object.keys(query).length > 0) {
-            this.props.changeListParams(this.props.resource, query);
+            this.props.changeListParams(resource, location.pathname, query);
         }
     }
 
@@ -294,9 +301,10 @@ export class ListController extends Component {
     }
 
     changeParams(action) {
+        const { resource, location } = this.props
         const newParams = queryReducer(this.getQuery(), action);
         this.updateLocation(newParams);
-        this.props.changeListParams(this.props.resource, newParams);
+        this.props.changeListParams(resource, location, newParams);
     }
 
     render() {
@@ -450,16 +458,21 @@ const getQuery = createSelector(
 function mapStateToProps(state, props) {
     const resourceState = state.admin.resources[props.resource];
 
+    const params = {
+        ...resourceState.list.params,
+        filter: resourceState.list.params.filter[props.location.pathname] || {},
+    }
+
     return {
         query: getQuery(props),
-        params: resourceState.list.params,
+        params,
         ids: resourceState.list.ids,
         selectedIds: resourceState.list.selectedIds,
         total: resourceState.list.total,
         totalAll: resourceState.list.totalAll,
         data: resourceState.data,
         isLoading: state.admin.loading > 0,
-        filterValues: resourceState.list.params.filter,
+        filterValues: params.filter,
         version: state.admin.ui.viewVersion,
     };
 }
