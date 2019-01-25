@@ -10,6 +10,8 @@ import inflection from 'inflection';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
+import isEmpty from 'lodash/isEmpty';
+import merge from 'lodash/merge';
 
 import removeEmpty from '../util/removeEmpty';
 import queryReducer, {
@@ -122,14 +124,10 @@ export class ListController extends Component {
         this.setFilters.cancel();
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps, nextState) {
         if (
             nextProps.resource !== this.props.resource ||
-            nextProps.query.sort !== this.props.query.sort ||
-            nextProps.query.order !== this.props.query.order ||
-            nextProps.query.page !== this.props.query.page ||
-            nextProps.query.perPage !== this.props.query.perPage ||
-            nextProps.query.filter !== this.props.query.filter
+            !isEqual(nextProps.query, this.props.query)
         ) {
             this.updateData(
                 nextProps,
@@ -158,7 +156,8 @@ export class ListController extends Component {
             nextProps.version === this.props.version &&
             nextState === this.state &&
             nextProps.data === this.props.data &&
-            nextProps.selectedIds === this.props.selectedIds
+            nextProps.selectedIds === this.props.selectedIds &&
+            isEqual(nextProps.query, this.props.query)
         ) {
             return false;
         }
@@ -194,17 +193,21 @@ export class ListController extends Component {
     updateData(props, query) {
         const params = query || this.getQuery();
         const { perPage } = props;
-        const { sort, order, page = 1, filter } = params;
+        const { sort, order, page = 1, filter: raFilter } = params;
         const pagination = {
             page: parseInt(page, 10),
             perPage: parseInt(perPage, 10),
         };
-        const permanentFilter = this.props.filter;
+        const {
+          defaultFilter,
+          permanentFilter,
+        } = this.props;
+        const filter = isEmpty(raFilter) && isEmpty(permanentFilter) ? defaultFilter : merge(permanentFilter, raFilter)
         this.props.crudGetList(
             this.props.resource,
             pagination,
             { field: sort, order },
-            { ...filter, ...permanentFilter }
+            filter
         );
     }
 
@@ -291,12 +294,14 @@ export class ListController extends Component {
     };
 
     updateLocation(params) {
+        const query = {
+            ...parse(this.props.location.search),
+            [this.props.resource]: JSON.stringify(params),
+        };
+
         this.props.push({
             ...this.props.location,
-            search: `?${stringify({
-                ...params,
-                filter: JSON.stringify(params.filter),
-            })}`,
+            search: `?${stringify(query)}`,
         });
     }
 
@@ -380,7 +385,8 @@ export class ListController extends Component {
 ListController.propTypes = {
     // the props you can change
     children: PropTypes.func.isRequired,
-    filter: PropTypes.object,
+    defaultFilter: PropTypes.object,
+    permanentFilter: PropTypes.object,
     filters: PropTypes.element,
     pagination: PropTypes.oneOfType([
         PropTypes.bool,
@@ -424,7 +430,8 @@ ListController.propTypes = {
 
 ListController.defaultProps = {
     debounce: 500,
-    filter: {},
+    defaultFilter: {},
+    permanentFilter: {},
     filterValues: {},
     perPage: 10,
     sort: {
@@ -436,21 +443,24 @@ ListController.defaultProps = {
 const validQueryParams = ['page', 'perPage', 'sort', 'order', 'filter'];
 const getLocationPath = props => props.location.pathname;
 const getLocationSearch = props => props.location.search;
+const getResource = props => props.resource;
 const getQuery = createSelector(
     getLocationPath,
     getLocationSearch,
-    (path, search) => {
+    getResource,
+    (path, search, resource) => {
+        let params
+        try {
+            params = JSON.parse(parse(search)[resource]);
+        } catch (err) {
+            return {};
+        }
+
         const query = pickBy(
-            parse(search),
+            params,
             (v, k) => validQueryParams.indexOf(k) !== -1
         );
-        if (query.filter && typeof query.filter === 'string') {
-            try {
-                query.filter = JSON.parse(query.filter);
-            } catch (err) {
-                delete query.filter;
-            }
-        }
+
         return query;
     }
 );
