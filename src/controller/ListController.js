@@ -9,9 +9,13 @@ import { createSelector } from 'reselect';
 import inflection from 'inflection';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
+import flatten from 'lodash/flatten';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
+import keys from 'lodash/keys';
+import omit from 'lodash/omit';
+import get from 'lodash/get';
 
 import removeEmpty from '../util/removeEmpty';
 import queryReducer, {
@@ -74,12 +78,21 @@ export class ListController extends Component {
     constructor(props) {
         super(props);
 
+        let activeFilters = {}
+
+        const queryFilters = keys(get(props, 'query.filter', {}))
+        if (queryFilters.length > 0) {
+          activeFilters = flatten([queryFilters, props.initiallyEnabledSources]).reduce((filters, filterName) => (
+            { ...filters, [filterName]: true }
+          ), {});
+        }
+
         const enabledSources = props.initiallyEnabledSources.reduce((sources, src) => (
             { ...sources, [src]: true }
-        ), {});
+        ), { ...activeFilters });
 
         this.state = {
-            activeFilters: {},
+            activeFilters,
             enabledSources,
         };
     }
@@ -127,7 +140,8 @@ export class ListController extends Component {
     componentWillReceiveProps(nextProps, nextState) {
         if (
             nextProps.resource !== this.props.resource ||
-            !isEqual(nextProps.query, this.props.query)
+            nextProps.perPage !== this.props.perPage ||
+            !this.isQueryEqual(nextProps.query, this.props.query)
         ) {
             this.updateData(
                 nextProps,
@@ -157,11 +171,16 @@ export class ListController extends Component {
             nextState === this.state &&
             nextProps.data === this.props.data &&
             nextProps.selectedIds === this.props.selectedIds &&
-            isEqual(nextProps.query, this.props.query)
+            nextProps.perPage === this.props.perPage &&
+            this.isQueryEqual(nextProps.query, this.props.query)
         ) {
             return false;
         }
         return true;
+    }
+
+    isQueryEqual(oldQuery, newQuery) {
+        return isEqual(omit(oldQuery, 'perPage'), omit(newQuery, 'perPage'))
     }
 
     getBasePath() {
@@ -192,8 +211,8 @@ export class ListController extends Component {
 
     updateData(props, query) {
         const params = query || this.getQuery();
-        const { perPage } = props;
         const { sort, order, page = 1, filter: raFilter } = params;
+        const { perPage } = props;
         const pagination = {
             page: parseInt(page, 10),
             perPage: parseInt(perPage, 10),
@@ -202,7 +221,7 @@ export class ListController extends Component {
           defaultFilter,
           permanentFilter,
         } = this.props;
-        const filter = isEmpty(raFilter) && isEmpty(permanentFilter) ? defaultFilter : merge(permanentFilter, raFilter)
+        const filter = isEmpty(raFilter) && isEmpty(permanentFilter) ? defaultFilter : merge({}, permanentFilter, raFilter)
         this.props.crudGetList(
             this.props.resource,
             pagination,
@@ -440,7 +459,7 @@ ListController.defaultProps = {
     },
 };
 
-const validQueryParams = ['page', 'perPage', 'sort', 'order', 'filter'];
+const validQueryParams = ['page', 'sort', 'order', 'filter'];
 const getLocationPath = props => props.location.pathname;
 const getLocationSearch = props => props.location.search;
 const getResource = props => props.resource;
