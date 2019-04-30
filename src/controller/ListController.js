@@ -81,10 +81,18 @@ export class ListController extends Component {
         let activeFilters = {}
 
         const queryFilters = keys(get(props, 'query.filter', {}))
-        if (queryFilters.length > 0) {
-          activeFilters = flatten([queryFilters, props.initiallyEnabledSources]).reduce((filters, filterName) => (
-            { ...filters, [filterName]: true }
-          ), {});
+        const storeFilters = keys(props.filterValues)
+        let allFilters = queryFilters.concat(storeFilters)
+
+        // range filters names ends with suffixes, for filter component we need also the name without suffix
+        const rangeFiltersSuffix = /(Min|Max)$/
+        const strippedRangeFilters = allFilters.map(filter => filter.replace(rangeFiltersSuffix, ''))
+
+        if (allFilters.length > 0) {
+          activeFilters = flatten([allFilters, strippedRangeFilters, props.initiallyEnabledSources])
+            .reduce((filters, filterName) => (
+                { ...filters, [filterName]: true }
+            ), {});
         }
 
         const enabledSources = props.initiallyEnabledSources.reduce((sources, src) => (
@@ -152,14 +160,6 @@ export class ListController extends Component {
         }
         if (nextProps.version !== this.props.version) {
             this.updateData(nextProps);
-        }
-        if (nextProps.filterValues !== this.props.filterValues) {
-            // TODO: showing inactive filters when props.filterValues changed
-            // is one approach for viewing the filter panel after page reload
-            // when there are filters present in the url. This does however
-            // break the tabBar by expanding the collapsed filter panel when
-            // user clicks a tab. Fixme!
-            // requestAnimationFrame(this.showInactiveFilters);
         }
     }
 
