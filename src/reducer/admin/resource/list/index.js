@@ -4,6 +4,7 @@ import params from './params';
 import selectedIds from './selectedIds';
 import total from './total';
 import totalAll from './totalAll';
+import relatedToCounts from './relatedToCounts';
 
 export default resource =>
     combineReducers({
@@ -12,4 +13,5 @@ export default resource =>
         selectedIds,
         total: total(resource),
         totalAll: totalAll(resource),
+        relatedToCounts: relatedToCounts(resource),
     });

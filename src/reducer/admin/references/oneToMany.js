@@ -1,4 +1,5 @@
 import { CRUD_GET_MANY_REFERENCE_SUCCESS } from '../../../actions/dataActions';
+import { parse } from 'query-string';
 
 const initialState = {};
 
@@ -92,3 +93,23 @@ export const nameRelatedTo = (reference, id, resource, target, filter = {}) => {
         .map(key => `${key}=${JSON.stringify(filter[key])}`)
         .join('&')}`;
 };
+
+export const parseNameRelatedTo = (relatedTo) => {
+  const resourceAndRest = relatedTo.split(/_(.*)/, 2)
+  const resource = resourceAndRest[0]
+  const referenceAndRest = resourceAndRest[1].split(/@(.*)/, 2)
+  const reference = referenceAndRest[0]
+  const targetAndRest = referenceAndRest[1].split(/_(.*)/, 2)
+  const target = targetAndRest[0]
+  const idAndFilter = targetAndRest[1].split(/\?(.*)/, 2)
+  const recordId = idAndFilter[0]
+  const filter = parse(idAndFilter[1])
+
+  return {
+    reference,
+    recordId,
+    resource,
+    target,
+    filter
+  }
+}
