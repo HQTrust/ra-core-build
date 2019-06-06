@@ -70,7 +70,13 @@ export const CRUD_CREATE_LOADING = 'RA/CRUD_CREATE_LOADING';
 export const CRUD_CREATE_FAILURE = 'RA/CRUD_CREATE_FAILURE';
 export const CRUD_CREATE_SUCCESS = 'RA/CRUD_CREATE_SUCCESS';
 
-export const crudCreate = (resource, data, basePath, redirectTo = 'edit') => ({
+export const crudCreate = (
+    resource,
+    data,
+    basePath,
+    redirectTo = 'edit',
+    options = {}
+) => ({
     type: CRUD_CREATE,
     payload: { data },
     meta: {
@@ -91,7 +97,7 @@ export const crudCreate = (resource, data, basePath, redirectTo = 'edit') => ({
             basePath,
         },
         onFailure: {
-            notification: {
+            notification: options.disableFailureNotification ? undefined : {
                 body: 'ra.notification.http_error',
                 level: 'warning',
             },
@@ -112,7 +118,8 @@ export const crudUpdate = (
     data,
     previousData,
     basePath,
-    redirectTo = 'show'
+    redirectTo = 'show',
+    options = {}
 ) => ({
     type: CRUD_UPDATE,
     payload: { id, data, previousData },
@@ -134,7 +141,7 @@ export const crudUpdate = (
             basePath,
         },
         onFailure: {
-            notification: {
+            notification: options.disableFailureNotification ? undefined : {
                 body: 'ra.notification.http_error',
                 level: 'warning',
             },
