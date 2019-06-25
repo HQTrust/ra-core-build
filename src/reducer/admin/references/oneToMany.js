@@ -105,8 +105,6 @@ export const parseNameRelatedTo = (relatedTo) => {
   const recordId = idAndFilter[0]
   const filter = parse(idAndFilter[1])
 
-  console.log('recordId:', recordId)
-
   return {
     reference,
     recordId,
