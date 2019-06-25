@@ -13,5 +13,5 @@ export default resource =>
         selectedIds,
         total: total(resource),
         totalAll: totalAll(resource),
-        relatedToCounts: relatedToCounts(resource),
+        relatedToCounts: 42,
     });
