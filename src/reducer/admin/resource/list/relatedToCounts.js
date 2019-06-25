@@ -24,7 +24,7 @@ export default resource => (previousState = {}, { type, payload, meta }) => {
 
   const {
     reference,
-    id,
+    recordId,
     resource: relatedResource,
     target,
     filter
@@ -34,7 +34,7 @@ export default resource => (previousState = {}, { type, payload, meta }) => {
 
   const relatedTo = nameRelatedTo(
     reference,
-    id,
+    recordId,
     relatedResource,
     target,
     filterSortedByKey
