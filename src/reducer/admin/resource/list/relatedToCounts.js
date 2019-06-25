@@ -24,7 +24,7 @@ export default resource => (previousState = {}, { type, payload, meta }) => {
 
   const {
     reference,
-    id,
+    recordId,
     resource: relatedResource,
     target,
     filter
@@ -32,9 +32,11 @@ export default resource => (previousState = {}, { type, payload, meta }) => {
   const { pagination, sort, ...relevantFilter } = filter
   const filterSortedByKey = _(relevantFilter).toPairs().sortBy(0).fromPairs().value()
 
+  console.log('parseNameRelatedTo:', recordId)
+
   const relatedTo = nameRelatedTo(
     reference,
-    id,
+    recordId,
     relatedResource,
     target,
     filterSortedByKey
