@@ -1,22 +1,11 @@
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import {
-    Component
-} from 'react';
+import { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-    connect
-} from 'react-redux';
-import {
-    parse,
-    stringify
-} from 'query-string';
-import {
-    push as pushAction
-} from 'react-router-redux';
+import { connect } from 'react-redux';
+import { parse, stringify } from 'query-string';
+import { push as pushAction } from 'react-router-redux';
 import compose from 'recompose/compose';
-import {
-    createSelector
-} from 'reselect';
+import { createSelector } from 'reselect';
 import inflection from 'inflection';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
@@ -35,9 +24,7 @@ import queryReducer, {
     SET_FILTER,
     SORT_DESC,
 } from '../reducer/admin/resource/list/queryReducer';
-import {
-    crudGetList as crudGetListAction
-} from '../actions/dataActions';
+import { crudGetList as crudGetListAction } from '../actions/dataActions';
 import {
     changeListParams as changeListParamsAction,
     setListSelectedIds as setListSelectedIdsAction,
@@ -103,18 +90,14 @@ export class ListController extends Component {
 
         if (allFilters.length > 0) {
             activeFilters = flatten([allFilters, strippedRangeFilters, props.initiallyEnabledSources])
-                .reduce((filters, filterName) => ({
-                    ...filters,
-                    [filterName]: true
-                }), {});
+                .reduce((filters, filterName) => (
+                    { ...filters, [filterName]: true }
+                ), {});
         }
 
-        const enabledSources = props.initiallyEnabledSources.reduce((sources, src) => ({
-            ...sources,
-            [src]: true
-        }), {
-            ...activeFilters
-        });
+        const enabledSources = props.initiallyEnabledSources.reduce((sources, src) => (
+            { ...sources, [src]: true }
+        ), { ...activeFilters });
 
         this.state = {
             activeFilters,
@@ -170,9 +153,9 @@ export class ListController extends Component {
         ) {
             this.updateData(
                 nextProps,
-                Object.keys(nextProps.query).length > 0 ?
-                nextProps.query :
-                nextProps.params
+                Object.keys(nextProps.query).length > 0
+                    ? nextProps.query
+                    : nextProps.params
             );
         }
         if (nextProps.version !== this.props.version) {
@@ -212,10 +195,9 @@ export class ListController extends Component {
      */
     getQuery() {
         const query =
-            Object.keys(this.props.query).length > 0 ?
-            this.props.query : {
-                ...this.props.params
-            };
+            Object.keys(this.props.query).length > 0
+                ? this.props.query
+                : { ...this.props.params };
         if (!query.sort) {
             query.sort = this.props.sort.field;
             query.order = this.props.sort.order;
@@ -229,15 +211,8 @@ export class ListController extends Component {
 
     updateData(props, query) {
         const params = query || this.getQuery();
-        const {
-            sort,
-            order,
-            page = 1,
-            filter: raFilter
-        } = params;
-        const {
-            perPage
-        } = props;
+        const { sort, order, page = 1, filter: raFilter } = params;
+        const { perPage } = props;
         const pagination = {
             page: parseInt(page, 10),
             perPage: parseInt(perPage, 10),
@@ -249,23 +224,15 @@ export class ListController extends Component {
         const filter = isEmpty(raFilter) && isEmpty(permanentFilter) ? defaultFilter : merge({}, permanentFilter, raFilter)
         this.props.crudGetList(
             this.props.resource,
-            pagination, {
-                field: sort,
-                order
-            },
+            pagination,
+            { field: sort, order },
             filter
         );
     }
 
-    setSort = sort => this.changeParams({
-        type: SET_SORT,
-        payload: sort
-    });
+    setSort = sort => this.changeParams({ type: SET_SORT, payload: sort });
 
-    setPage = page => this.changeParams({
-        type: SET_PAGE,
-        payload: page
-    });
+    setPage = page => this.changeParams({ type: SET_PAGE, payload: page });
 
     setFiltersImmediate = filters => {
         if (isEqual(filters, this.props.filterValues)) {
@@ -274,20 +241,14 @@ export class ListController extends Component {
 
         // fix for redux-form bug with onChange and enableReinitialize
         const filtersWithoutEmpty = removeEmpty(filters);
-        this.changeParams({
-            type: SET_FILTER,
-            payload: filtersWithoutEmpty
-        });
+        this.changeParams({ type: SET_FILTER, payload: filtersWithoutEmpty });
     }
 
     setFilters = debounce(this.setFiltersImmediate, this.props.debounce);
 
     showFilter = (filterName, defaultValue) => {
         this.setState({
-            activeFilters: {
-                ...this.state.activeFilters,
-                [filterName]: true
-            },
+            activeFilters: { ...this.state.activeFilters, [filterName]: true },
         });
         if (typeof defaultValue !== 'undefined') {
             this.setFilters({
@@ -298,43 +259,31 @@ export class ListController extends Component {
     };
 
     hideActiveFilters = () => {
-        this.setState({
-            activeFilters: {}
-        });
+        this.setState({ activeFilters: {} });
     };
 
     sanitizedFilterName = filterName => {
         const suffix = filterName.slice(-3);
-        return suffix === 'Min' || suffix === 'Max' ?
-            filterName.substr(0, filterName.length - 3) :
-            filterName;
+        return suffix === 'Min' || suffix === 'Max'
+            ? filterName.substr(0, filterName.length - 3)
+            : filterName;
     };
 
     showInactiveFilters = () => {
-        const activeFilters = {
-            ...this.state.enabledSources
-        };
-        const enabledSources = {
-            ...this.state.enabledSources
-        };
+        const activeFilters = { ...this.state.enabledSources };
+        const enabledSources = { ...this.state.enabledSources };
         Object.keys(this.props.filterValues).forEach(filterName => {
             const sanitizedFilterName = this.sanitizedFilterName(filterName);
             activeFilters[sanitizedFilterName] = true;
             enabledSources[sanitizedFilterName] = true;
         });
 
-        this.setState({
-            activeFilters,
-            enabledSources
-        });
+        this.setState({ activeFilters, enabledSources });
     };
 
     hideFilter = filterName => {
         this.setState({
-            activeFilters: {
-                ...this.state.activeFilters,
-                [filterName]: false
-            },
+            activeFilters: { ...this.state.activeFilters, [filterName]: false },
         });
         const newFilters = removeKey(this.props.filterValues, filterName);
         this.setFilters(newFilters);
@@ -354,14 +303,8 @@ export class ListController extends Component {
 
     setSourceActive = (source, active) => {
         this.setState({
-            activeFilters: {
-                ...this.state.activeFilters,
-                [source]: active
-            },
-            enabledSources: {
-                ...this.state.enabledSources,
-                [source]: active
-            },
+            activeFilters: { ...this.state.activeFilters, [source]: active },
+            enabledSources: { ...this.state.enabledSources, [source]: active },
         });
 
         if (!active) {
@@ -382,10 +325,7 @@ export class ListController extends Component {
     }
 
     changeParams(action) {
-        const {
-            resource,
-            location
-        } = this.props
+        const { resource, location } = this.props
         const newParams = queryReducer(this.getQuery(), action);
         this.updateLocation(newParams);
         this.props.changeListParams(resource, location, newParams);
@@ -407,9 +347,7 @@ export class ListController extends Component {
             selectedIds,
             metaSources,
         } = this.props;
-        const {
-            enabledSources
-        } = this.state;
+        const { enabledSources } = this.state;
         const query = this.getQuery();
 
         const queryFilterValues = query.filter || {};
