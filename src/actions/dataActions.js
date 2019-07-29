@@ -29,9 +29,9 @@ export const crudGetList = (resource, pagination, sort, filter) => ({
         onFailure: {
             notification: {
                 body: 'ra.notification.http_error',
-                level: 'warning',
+                level: 'error',
             },
-            refresh: true,
+            refresh: false,
         },
     },
 });
